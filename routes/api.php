@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PassportController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,10 +21,15 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('register', [PassportController::class, 'register']);
-Route::post('login', [PassportController::class, 'login']);
+/* Route::post('register', [PassportController::class, 'register']);
+Route::post('login', [PassportController::class, 'login']); */
+
+
+Route::post('login', [AuthenticatedSessionController::class, 'store'])
+                ->middleware('guest');
+
 
 Route::middleware('auth:api')->group(function() {
     Route::resource('employees', EmployeeController::class);
-    Route::post('logout', [PassportController::class, 'logout']);
+    Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });
